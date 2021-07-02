@@ -10,7 +10,7 @@ public interface IDao {
 
     User selectUser(int id) throws SQLException, ClassNotFoundException;
 
-    List<User> selectAllUser();
+    List<User> selectAllUser() throws SQLException, ClassNotFoundException;
 
     boolean deleteUser(int id);
 

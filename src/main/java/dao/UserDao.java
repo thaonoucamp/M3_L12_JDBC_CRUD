@@ -3,17 +3,18 @@ package dao;
 import model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao implements IDao {
-    private String JDBC_URL = "jdbc:mysql://localhost:3306/ManageUser_JDBC_MySQL";
+    private String JDBC_URL = "jdbc:mysql://localhost:3306/Manage_User";
     private String JDBC_USER_NAME = "root";
     private String JDBC_PASSWORD = "04051990";
 
     private static final String INSERT_USERS_SQL = "insert in users " + "(name, email, country) values " + " (?, ?, ?);";
     private static final String DELETE_USERS_SQL = "delete from users where id = ? ";
     private static final String UPDATE_USERS_SQL = "update from users where id = ?";
-    private static final String SELECT_USERS_BY_ID = "select id, name, email, country from users where id = ?";
+    private static final String SELECT_USERS_BY_ID = "select id, name, email, count y from users where id = ?";
     private static final String SELECT_ALL_USERS = "select * from users";
 
     public UserDao() {
@@ -22,7 +23,7 @@ public class UserDao implements IDao {
 
     protected Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection connection = null;
-        Class.forName("com.mrsql.jdbc.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
         connection = DriverManager.getConnection(JDBC_URL, JDBC_USER_NAME, JDBC_PASSWORD);
         return connection;
     }
@@ -50,16 +51,26 @@ public class UserDao implements IDao {
         while (resultSet.next()) {
             String name = resultSet.getString("name");
             String email = resultSet.getString("email");
-            String address = resultSet.getString("address");
+            String address = resultSet.getString("county");
             user = new User(id, name, email, address);
         }
         return user;
     }
 
     @Override
-    public List<User> selectAllUser() {
-
-        return null;
+    public List<User> selectAllUser() throws SQLException, ClassNotFoundException {
+        List<User> userList = new ArrayList<>();
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String name = resultSet.getString("name");
+            String email = resultSet.getString("email");
+            String address = resultSet.getString("county");
+            userList.add(new User(id, name, email, address));
+        }
+        return userList;
     }
 
     @Override
